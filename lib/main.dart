@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:will_app/Config/i18n/app_local.dart';
 import 'package:will_app/Config/i18n/localization_cubit/locale_cubit.dart';
 import 'package:will_app/Config/i18n/localization_cubit/locale_states.dart';
@@ -11,13 +12,19 @@ import 'package:will_app/Config/router/app_router.dart';
 import 'package:will_app/Core/constants/app_initializations.dart';
 import 'package:will_app/Core/utils/bloc_ovserver.dart';
 
-void main() async {
+void main() async
+{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Set up Bloc observer before starting app
   Bloc.observer = const SimpleBlocObserver();
 
+  // Initialize necessary services
   await FlutterLocalization.instance.ensureInitialized();
-  AppLocalizationsInit().localizationsInitState();
+  await SharedPreferences.getInstance();
 
-  WidgetsFlutterBinding.ensureInitialized();
+  // Ensure localization state initialization
+  AppLocalizationsInit().localizationsInitState();
 
   runApp(
     DevicePreview(
@@ -62,6 +69,7 @@ class WillApp extends StatelessWidget
           locale: mainLocaleLanguage,
 
           theme: ThemeData.light().copyWith(textTheme: GoogleFonts.montserratAlternatesTextTheme(),),
+          debugShowCheckedModeBanner: false,
         );
       },
     );
